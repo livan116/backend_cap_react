@@ -1,14 +1,18 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { login } from "../services/index";
 const Login = () => {
     const navigate = useNavigate()
-    if(localStorage.getItem("token")){
-        alert("Already Logged In");
-        navigate('/home')
-    }
-
+    
+    useEffect(()=>{
+      const token = localStorage.getItem("token")
+        if(token){
+            alert("Already Logged In");
+            navigate('/home')
+        }
+    
+    },[])
    
     const [loginFormData, setLoginFormData] = useState({
         email:'',
@@ -25,7 +29,9 @@ const Login = () => {
         e.preventDefault();
         const res = await login(loginFormData);
         if(res.status === 200){
-            localStorage.setItem('token',res.token)
+            const data = await res.json()
+            console.log(data)
+            localStorage.setItem('token',data.token)
           alert('Logged in successfully');
           navigate('/home')
         }
